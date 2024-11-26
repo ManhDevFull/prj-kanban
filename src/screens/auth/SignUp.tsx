@@ -1,15 +1,51 @@
 import React, { useState } from 'react'
-import { Button, Card, Checkbox, Form, Input, Space, Typography } from 'antd'
+import { Button, Card, Form, Input, message, Space, Typography } from 'antd'
 import { Link } from 'react-router-dom'
 import SocialLogin from './components/SocialLogin'
+import handleAPI from '../../apis/handleAPI'
+import { useDispatch } from 'react-redux'
+import { addAuth } from '../../reduxs/reducers/authReducer'
+// import { localDataNames } from '../../constants/appInfos'
+
+
 const { Title, Paragraph, Text } = Typography
 
 const SignUp = () => {
     const [form] = Form.useForm()
+    const dispatch = useDispatch()
     const [isLoading, setIsLoading] = useState(false)
-    const handleLogin = (values: { email: string; password: string }) => {
-        console.log(values)
-    }
+
+
+    const handleLogin = async (values: { email: string; password: string }) => {
+		const api = `/auth/register`;
+
+		setIsLoading(true);
+		try {
+			const res: any = await handleAPI(api, values, 'post')
+			if (res.data) {
+                // localStorage.setItem(localDataNames.authData, JSON.stringify(res.data.data))
+				message.success(res.message);
+				dispatch(addAuth(res.data))
+			}
+		} catch (error: any) {
+			message.error(error.response.data.message)
+		} finally {
+			setIsLoading(false);
+		}
+	}
+    // const handleLogin = async (values: { email: string; password: string }) => {
+    //     const api = '/auth/register'
+    //     setIsLoading(true)
+    //     try {
+    //         const res = await handleAPI(api, values, 'post')
+    //         console.log(res)
+    //     } catch (error:any) {
+    //         console.log(error)
+    //         message.error(error.message)
+    //     } finally {
+    //         setIsLoading(false)
+    //     }
+    // }
     return (
         <div>
             <Card>
@@ -54,13 +90,13 @@ const SignUp = () => {
                     </Form.Item>
                 </Form>
                 <div className='mt-4 mb-3'>
-                    <Button type='primary' style={{
+                    <Button loading={isLoading} type='primary' style={{
                         width: '100%'
                     }} size='large' onClick={() => form.submit()}>
-                        Login
+                        Sign Up
                     </Button>
                 </div>
-                <SocialLogin />
+                <SocialLogin isRemember={false} />
                 <div className="mt-4 text-center">
                     <Space>
                         <Text type='secondary'>Already an account?</Text>
