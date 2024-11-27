@@ -13,7 +13,9 @@ const MainRouter = () => {
       <SiderComponent />
       <Layout>
         <HeaderComponent />
-        <Content>
+        <Content className="mb-2 mt-3 container bg-white" style={{
+          borderRadius: 5
+        }}>
           <Routes>
             <Route path='/' element={<HomeScreen />} />
             <Route path='/inventory' element={<InventoryScreen />} />
